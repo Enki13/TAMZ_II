@@ -22,7 +22,28 @@ public class MyDrawView extends View {
     private Path brushPath;
     private int brushColor = 0xFF000000;
     private float mX, mY;
-    private ArrayList<Path> paths = new ArrayList<Path>();
+    private ArrayList<Stroke> layer1 = new ArrayList<Stroke>();
+    private ArrayList<Stroke> layer2 = new ArrayList<Stroke>();
+    private ArrayList<Stroke> layer3 = new ArrayList<Stroke>();
+    private int layer = 1;
+
+    private class Stroke{
+        private Paint paint;
+        private Path path;
+
+        public Stroke(Paint paint, Path path){
+            this.paint = paint;
+            this.path = path;
+        }
+
+        public Paint getPaint() {
+            return paint;
+        }
+
+        public Path getPath() {
+            return path;
+        }
+    }
 
     public MyDrawView(Context context) {
         super(context);
@@ -52,7 +73,7 @@ public class MyDrawView extends View {
         brushPaint = new Paint();
         brushPaint.setColor(brushColor);
         brushPaint.setAntiAlias(true);
-        brushPaint.setStrokeWidth(10);
+        brushPaint.setStrokeWidth(5);
         brushPaint.setStyle(Paint.Style.STROKE);
         brushPaint.setStrokeJoin(Paint.Join.ROUND);
         brushPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -60,8 +81,18 @@ public class MyDrawView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        for (Path p : paths) {
-            canvas.drawPath(p, brushPaint);
+        for (Stroke s : layer1) {
+            canvas.drawPath(s.getPath(), s.getPaint());
+        }
+        if(layer > 1){
+            for (Stroke s : layer2) {
+                canvas.drawPath(s.getPath(), s.getPaint());
+            }
+        }
+        if(layer > 2){
+            for (Stroke s : layer3) {
+                canvas.drawPath(s.getPath(), s.getPaint());
+            }
         }
         canvas.drawPath(brushPath, brushPaint);
     }
@@ -91,8 +122,12 @@ public class MyDrawView extends View {
                 break;
             case MotionEvent.ACTION_UP:
                 brushPath.lineTo(mX, mY);
-                drawCanvas.drawPath(brushPath, brushPaint);
-                paths.add(brushPath);
+                //drawCanvas.drawPath(brushPath, brushPaint);
+                switch (layer){
+                    case 1 : layer1.add(new Stroke(brushPaint, brushPath)); break;
+                    case 2 : layer2.add(new Stroke(brushPaint, brushPath)); break;
+                    case 3 : layer3.add(new Stroke(brushPaint, brushPath)); break;
+                }
                 brushPath = new Path();
                 invalidate();
                 break;
@@ -100,5 +135,30 @@ public class MyDrawView extends View {
                 return false;
         }
         return true;
+    }
+
+    public void setLayer(int l){
+        layer = l;
+        invalidate();
+    }
+
+    public void eraseLayer(){
+        switch (layer){
+            case 1 : layer1.clear(); break;
+            case 2 : layer2.clear(); break;
+            case 3 : layer3.clear(); break;
+        }
+        invalidate();
+    }
+
+    public void eraseAll(){
+        layer1.clear();
+        layer2.clear();
+        layer3.clear();
+        invalidate();
+    }
+
+    public void setBrushSize(int size){
+        brushPaint.setStrokeWidth(size);
     }
 }

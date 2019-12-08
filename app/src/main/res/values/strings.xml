@@ -13,4 +13,15 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="erase_all_layers">Erase All Layers</string>
+    <string name="erase_current_layer">Erase Current Layer</string>
+    <string name="upper_layer">Upper Layer</string>
+    <string name="middle_layer">Middle Layer</string>
+    <string name="lower_layer">Lower Layer</string>
+    <string name="brush_size">Brush size</string>
+    <string name="brush_properties">Brush Properties</string>
+    <string name="layers">Layers</string>
+    <string name="eraser_tools">Eraser tools</string>
 </resources>
