@@ -69,14 +69,7 @@ public class MyDrawView extends View {
 
     private void init(){
         brushPath = new Path();
-
-        brushPaint = new Paint();
-        brushPaint.setColor(brushColor);
-        brushPaint.setAntiAlias(true);
-        brushPaint.setStrokeWidth(5);
-        brushPaint.setStyle(Paint.Style.STROKE);
-        brushPaint.setStrokeJoin(Paint.Join.ROUND);
-        brushPaint.setStrokeCap(Paint.Cap.ROUND);
+        createNewBrush();
     }
 
     @Override
@@ -158,7 +151,18 @@ public class MyDrawView extends View {
         invalidate();
     }
 
+    public void createNewBrush(){
+        brushPaint = new Paint();
+        brushPaint.setColor(brushColor);
+        brushPaint.setAntiAlias(true);
+        brushPaint.setStrokeWidth(5);
+        brushPaint.setStyle(Paint.Style.STROKE);
+        brushPaint.setStrokeJoin(Paint.Join.ROUND);
+        brushPaint.setStrokeCap(Paint.Cap.ROUND);
+    }
+
     public void setBrushSize(int size){
+        createNewBrush();
         brushPaint.setStrokeWidth(size);
     }
 }
