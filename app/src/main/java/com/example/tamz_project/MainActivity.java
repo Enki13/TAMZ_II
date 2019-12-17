@@ -1,11 +1,14 @@
 package com.example.tamz_project;
 
 import android.app.Dialog;
+import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,11 +33,19 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private MyDrawView drawView;
+    final MediaPlayer mp = MediaPlayer.create(this, R.raw.button);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_send)
+                R.id.nav_home)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -64,6 +74,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.undo:
+                drawView.undo();
+                return true;
+            case R.id.redo:
+                drawView.redo();
+                return true;
+            case R.id.action_save:
+                saveImage();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -82,23 +110,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.lower_layer: {
                 drawView.setLayer(1);
+                mp.start();
                 break;
             }
             case R.id.middle_layer: {
                 drawView.setLayer(2);
+                mp.start();
                 break;
             }
             case R.id.upper_layer: {
                 drawView.setLayer(3);
+                mp.start();
                 break;
             }
 
             case R.id.erase_layer: {
                 drawView.eraseLayer();
+                mp.start();
                 break;
             }
             case R.id.erase_all: {
                 drawView.eraseAll();
+                mp.start();
                 break;
             }
 
@@ -151,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         yourDialog.cancel();
                     }
                 });
+                mp.start();
                 yourDialog.show();
             }
         }
@@ -163,5 +197,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.lower_layer);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    void saveImage() {
+
+        try {
+            Date date = Calendar.getInstance().getTime();
+            DateFormat dateFormat = new SimpleDateFormat("yyyymmdd_hhmmss");
+            String strDate = dateFormat.format(date);
+
+            File dir = new File("/sdcard/drawapp/");
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            File f = new File(dir ,strDate + ".png");
+            f.createNewFile();
+            FileOutputStream out = new FileOutputStream(f);
+            Bitmap bitmap = drawView.getCanvasBitmap();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

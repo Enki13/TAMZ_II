@@ -24,4 +24,7 @@
     <string name="brush_properties">Brush Properties</string>
     <string name="layers">Layers</string>
     <string name="eraser_tools">Eraser tools</string>
+    <string name="redo">Redo</string>
+    <string name="action_save">Save image</string>
+    <string name="undo">Undo</string>
 </resources>

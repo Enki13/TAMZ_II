@@ -2,8 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/undo"
+        android:orderInCategory="1"
+        android:icon="@drawable/undo"
+        android:title="@string/undo"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/redo"
+        android:orderInCategory="2"
+        android:icon="@drawable/redo"
+        android:title="@string/redo"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_save"
+        android:orderInCategory="3"
+        android:icon="@drawable/save"
+        android:title="@string/action_save"
+        app:showAsAction="always" />
 </menu>
