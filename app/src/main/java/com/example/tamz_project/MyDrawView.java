@@ -20,7 +20,6 @@ public class MyDrawView extends View {
     private Bitmap canvasBitmap;
     private Paint brushPaint;
     private Path brushPath;
-    private int brushColor = 0xFF000000;
     private float mX, mY;
     private ArrayList<Stroke> layer1 = new ArrayList<Stroke>();
     private ArrayList<Stroke> layer2 = new ArrayList<Stroke>();
@@ -31,6 +30,9 @@ public class MyDrawView extends View {
     private int layer = 1;
     private int widht;
     private int height;
+    private int color;
+    private int size;
+    private int brushMode;
 
     private class Stroke {
         private Paint paint;
@@ -70,33 +72,42 @@ public class MyDrawView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         widht = w;
         height = h;
-        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        drawCanvas = new Canvas(canvasBitmap);
+        //canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        //drawCanvas = new Canvas(canvasBitmap);
     }
 
     private void init(Context context) {
         brushPath = new Path();
-        createNewBrush();
         widht = context.getResources().getDisplayMetrics().widthPixels;
         height = context.getResources().getDisplayMetrics().heightPixels;
+        canvasBitmap = Bitmap.createBitmap(widht, height, Bitmap.Config.ARGB_8888);
+        drawCanvas = new Canvas(canvasBitmap);
+        color = 0xFF000000;
+        size = 5;
+        createNewBrush();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        drawCanvas.drawColor(0xFFFFFFFF);
         for (Stroke s : layer1) {
             canvas.drawPath(s.getPath(), s.getPaint());
+            drawCanvas.drawPath(s.getPath(), s.getPaint());
         }
         if (layer > 1) {
             for (Stroke s : layer2) {
                 canvas.drawPath(s.getPath(), s.getPaint());
+                drawCanvas.drawPath(s.getPath(), s.getPaint());
             }
         }
         if (layer > 2) {
             for (Stroke s : layer3) {
                 canvas.drawPath(s.getPath(), s.getPaint());
+                drawCanvas.drawPath(s.getPath(), s.getPaint());
             }
         }
         canvas.drawPath(brushPath, brushPaint);
+        drawCanvas.drawPath(brushPath, brushPaint);
     }
 
     @Override
@@ -185,17 +196,20 @@ public class MyDrawView extends View {
 
     public void createNewBrush() {
         brushPaint = new Paint();
-        brushPaint.setColor(brushColor);
+        brushPaint.setColor(color);
         brushPaint.setAntiAlias(true);
-        brushPaint.setStrokeWidth(5);
-        brushPaint.setStyle(Paint.Style.STROKE);
+        brushPaint.setStrokeWidth(size);
+        if(brushMode == 1)
+            brushPaint.setStyle(Paint.Style.FILL);
+        else
+            brushPaint.setStyle(Paint.Style.STROKE);
         brushPaint.setStrokeJoin(Paint.Join.ROUND);
         brushPaint.setStrokeCap(Paint.Cap.ROUND);
     }
 
     public void setBrushSize(int size) {
+        this.size = size;
         createNewBrush();
-        brushPaint.setStrokeWidth(size);
     }
 
     public void undo() {
@@ -241,8 +255,24 @@ public class MyDrawView extends View {
     }
 
     public Bitmap getCanvasBitmap(){
-        canvasBitmap = Bitmap.createBitmap(widht, height, Bitmap.Config.ARGB_8888);
         return canvasBitmap;
     }
 
+    public void setBrushColor(int color){
+        this.color = color;
+        createNewBrush();
+    }
+
+    public int getSize(){
+        return size;
+    }
+
+    public void setMode(int i){
+        brushMode = i;
+        createNewBrush();
+    }
+
+    public int getBrushMode(){
+        return brushMode;
+    }
 }

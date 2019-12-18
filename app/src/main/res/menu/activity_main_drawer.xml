@@ -20,9 +20,17 @@
     </item>
 
     <item android:title="@string/brush_properties">
-        <item
-            android:id="@+id/brush_size"
-            android:title="@string/brush_size" />
+        <menu>
+            <item
+                android:id="@+id/brush_size"
+                android:title="@string/brush_size" />
+            <item
+                android:id="@+id/brush_color"
+                android:title="@string/brush_color" />
+            <item
+                android:id="@+id/brush_mode"
+                android:title="@string/bruhs_mode" />
+        </menu>
     </item>
 
     <item android:title="@string/eraser_tools">
