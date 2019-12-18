@@ -3,6 +3,7 @@ package com.example.tamz_project;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -78,6 +79,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
@@ -98,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
             case R.id.action_save:
                 String s = saveImage();
-                if (s.equals(""))
-                    Toast.makeText(getApplicationContext(), "Image saved as " + s, Toast.LENGTH_SHORT).show();
+                if (!s.equals(""))
+                    Toast.makeText(getApplicationContext(), "Image saved in " + s, Toast.LENGTH_LONG).show();
                 else
                     Toast.makeText(getApplicationContext(), "Exeption occured while trying to save image.", Toast.LENGTH_SHORT).show();
                 return true;
@@ -123,49 +144,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
 
             case R.id.lower_layer: {
-                drawView.setLayer(1);
                 mp.start();
+                drawView.setLayer(1);
                 break;
             }
             case R.id.middle_layer: {
-                drawView.setLayer(2);
                 mp.start();
+                drawView.setLayer(2);
                 break;
             }
             case R.id.upper_layer: {
-                drawView.setLayer(3);
                 mp.start();
+                drawView.setLayer(3);
                 break;
             }
 
             case R.id.erase_layer: {
-                drawView.eraseLayer();
                 mp.start();
+                drawView.eraseLayer();
                 break;
             }
             case R.id.erase_all: {
-                drawView.eraseAll();
                 mp.start();
+                drawView.eraseAll();
                 break;
             }
 
             case R.id.brush_size: {
-                brushSize();
                 mp.start();
+                brushSize();
                 break;
             }
 
             case R.id.brush_color: {
-                brushColor();
                 mp.start();
+                brushColor();
                 break;
             }
 
             case R.id.brush_mode: {
-                brushMode();
                 mp.start();
+                brushMode();
                 break;
             }
+
         }
         //close navigation drawer
         drawer.closeDrawer(GravityCompat.START);
@@ -193,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
-            return strDate;
+            return f.getAbsolutePath();
         } catch (Exception e) {
             e.printStackTrace();
             return "";
@@ -201,55 +223,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void brushSize() {
-        /*final Dialog dialog = new Dialog(this);
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.brush_size_dialog, (ViewGroup) findViewById(R.id.dialog_root_element));
-        dialog.setTitle("Select size");
-        dialog.setContentView(layout);
-        final TextView txt_size = (TextView) layout.findViewById(R.id.txt_brush_size);
-        Button b_confirm = (Button) layout.findViewById(R.id.btn_confirm);
-        Button b_cancel = (Button) layout.findViewById(R.id.btn_cancel);
-        SeekBar seekBar = (SeekBar) layout.findViewById(R.id.seek_brush_size);
-        txt_size.setText(String.valueOf(drawView.getSize()));
-        seekBar.setProgress(drawView.getSize());
-        final int[] size = {drawView.getSize()};
-        SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                if (progress == 0) {
-                    size[0] = progress + 1;
-                } else {
-                    size[0] = progress;
-                }
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-            @Override
-            public void onProgressChanged(SeekBar seekBark, int progress, boolean fromUser) {
-                if (progress == 0) {
-                    txt_size.setText(String.valueOf(progress + 1));
-                } else {
-                    txt_size.setText(String.valueOf(progress));
-                }
-            }
-        };
-        seekBar.setOnSeekBarChangeListener(seekBarListener);
-        b_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-        b_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawView.setBrushSize(size[0]);
-                dialog.cancel();
-            }
-        });
-        dialog.show();*/
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.brush_size_dialog, (ViewGroup) findViewById(R.id.dialog_root_element));
@@ -328,14 +301,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void brushMode() {
         final AlertDialog.Builder adb = new AlertDialog.Builder(this);
         CharSequence items[] = new CharSequence[]{"Stroke", "Fill"};
+        final int[] mode = new int[1];
         adb.setSingleChoiceItems(items, drawView.getBrushMode(), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface d, int n) {
-                drawView.setMode(n);
-
+                mode[0] = n;
             }
         });
-        adb.setPositiveButton("Confirm", null);
+        adb.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                drawView.setMode(mode[0]);
+            }
+        });
         adb.setNegativeButton("Cancel", null);
         adb.setTitle("Select mode");
         adb.show();

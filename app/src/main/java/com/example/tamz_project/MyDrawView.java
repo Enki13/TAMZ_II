@@ -28,8 +28,6 @@ public class MyDrawView extends View {
     private ArrayList<Stroke> undoLayer2 = new ArrayList<Stroke>();
     private ArrayList<Stroke> undoLayer3 = new ArrayList<Stroke>();
     private int layer = 1;
-    private int widht;
-    private int height;
     private int color;
     private int size;
     private int brushMode;
@@ -70,17 +68,15 @@ public class MyDrawView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        widht = w;
-        height = h;
-        //canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        //drawCanvas = new Canvas(canvasBitmap);
+        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        drawCanvas = new Canvas(canvasBitmap);
     }
 
     private void init(Context context) {
         brushPath = new Path();
-        widht = context.getResources().getDisplayMetrics().widthPixels;
-        height = context.getResources().getDisplayMetrics().heightPixels;
-        canvasBitmap = Bitmap.createBitmap(widht, height, Bitmap.Config.ARGB_8888);
+        int width = context.getResources().getDisplayMetrics().widthPixels;
+        int height = context.getResources().getDisplayMetrics().heightPixels;
+        canvasBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
         color = 0xFF000000;
         size = 5;
@@ -146,7 +142,6 @@ public class MyDrawView extends View {
                 break;
             case MotionEvent.ACTION_UP:
                 brushPath.lineTo(mX, mY);
-                //drawCanvas.drawPath(brushPath, brushPaint);
                 switch (layer) {
                     case 1:
                         layer1.add(new Stroke(brushPaint, brushPath));

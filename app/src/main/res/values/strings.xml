@@ -24,4 +24,7 @@
     <string name="undo">Undo</string>
     <string name="bruhs_mode">Bruhs mode</string>
     <string name="default_size">5</string>
+    <string name="portrait_mode">Portrait mode</string>
+    <string name="landscape_mode">Landscape mode</string>
+    <string name="layout_change">Layout change</string>
 </resources>
