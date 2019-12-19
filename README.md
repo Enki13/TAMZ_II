@@ -4,4 +4,4 @@ Drawing application developed by Dominik Kříž for Android made as a project f
 <b>Description:</b>
 Application for drawing. It can draw on three different layers. Strokes on all layers can be erase or they can be erased individually. 
 Each of these layers have separate undo and redo features. Each stroke can have different size, color and mode, either stroke or fill.
-Drawings can be saved to memory.
+Drawings can be saved to memory. Uses Color Picker by QuadFlask.
