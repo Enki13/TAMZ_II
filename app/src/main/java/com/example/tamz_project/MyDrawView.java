@@ -270,4 +270,6 @@ public class MyDrawView extends View {
     public int getBrushMode(){
         return brushMode;
     }
+
+    public int getColor() { return color; }
 }

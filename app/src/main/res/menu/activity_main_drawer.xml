@@ -43,4 +43,15 @@
                 android:title="@string/erase_all_layers" />
         </menu>
     </item>
+
+    <item android:title="@string/layout_change">
+        <menu>
+            <item
+                android:id="@+id/orient_portrait"
+                android:title="@string/portrait_mode" />
+            <item
+                android:id="@+id/orient_landscape"
+                android:title="@string/landscape_mode" />
+        </menu>
+    </item>
 </menu>

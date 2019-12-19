@@ -3,6 +3,7 @@ package com.example.tamz_project;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
@@ -53,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private MyDrawView drawView;
-    MediaPlayer mp;
+    private MediaPlayer mp;
+    private int orient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupWithNavController(navigationView, navController);
         setNavigationViewListener();
         mp = MediaPlayer.create(this, R.raw.button);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadSettings();
     }
 
     @Override
@@ -188,6 +202,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
 
+            case R.id.orient_portrait: {
+                if (orient == 2) {
+                    mp.start();
+                    orient = 1;
+                    saveSettings(4);
+                    changeOrient(orient);
+                }
+                break;
+            }
+
+            case R.id.orient_landscape: {
+                if (orient == 1) {
+                    mp.start();
+                    orient = 2;
+                    saveSettings(4);
+                    changeOrient(orient);
+                }
+                break;
+            }
+
         }
         //close navigation drawer
         drawer.closeDrawer(GravityCompat.START);
@@ -265,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 drawView.setBrushSize(size[0]);
+                saveSettings(1);
             }
         });
         popDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -287,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
                         drawView.setBrushColor(selectedColor);
+                        saveSettings(2);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -312,10 +348,70 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 drawView.setMode(mode[0]);
+                saveSettings(3);
             }
         });
         adb.setNegativeButton("Cancel", null);
         adb.setTitle("Select mode");
         adb.show();
+    }
+
+    public void changeOrient(final int o) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to change orientation? It will reset your canvas.")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (o == 2)
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        if (o == 1)
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    public void saveSettings(int i) {
+        if (drawView == null)
+            drawView = findViewById(R.id.custom_view);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("SBPrefs", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        switch (i) {
+            case 1:
+                editor.putInt("size", drawView.getSize());
+                break;
+            case 2:
+                editor.putInt("color", drawView.getColor());
+                break;
+            case 3:
+                editor.putInt("mode", drawView.getBrushMode());
+                break;
+            case 4:
+                editor.putInt("orientation", orient);
+                break;
+        }
+        editor.commit();
+    }
+
+    public void loadSettings(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("SBPrefs", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        if (drawView == null)
+            drawView = findViewById(R.id.custom_view);
+        drawView.setBrushSize(pref.getInt("size", 5));
+        drawView.setBrushColor(pref.getInt("color", 0xFF000000));
+        drawView.setMode(pref.getInt("mode", 0));
+        orient = pref.getInt("orientation", 1);
+        if(orient == 1)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if(orient == 2)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 }
