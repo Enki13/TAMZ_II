@@ -205,9 +205,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.orient_portrait: {
                 if (orient == 2) {
                     mp.start();
-                    orient = 1;
-                    saveSettings(4);
-                    changeOrient(orient);
+                    changeOrient(1);
                 }
                 break;
             }
@@ -215,9 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.orient_landscape: {
                 if (orient == 1) {
                     mp.start();
-                    orient = 2;
-                    saveSettings(4);
-                    changeOrient(orient);
+                    changeOrient(2);
                 }
                 break;
             }
@@ -362,10 +358,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if (o == 2)
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                         if (o == 1)
+                        {
+                            orient = 1;
+                            saveSettings(4);
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        }
+                        if (o == 2)
+                        {
+                            orient = 2;
+                            saveSettings(4);
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        }
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
